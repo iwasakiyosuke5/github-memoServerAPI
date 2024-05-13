@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemoPadServer</title>
+    
+    <!-- <link rel="stylesheet" href="reset.css"> -->
+    <link rel="stylesheet" href="css/reset.css">
+    <!-- <link rel="stylesheet" href="css/sample.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/862824129a.js" crossorigin="anonymous"></script>
+    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=As9A4gB4JEOrJjHl6nq84lsNltpywnNg0E_0ZYbMQpBmLoYDhPpMuRgIt99ZFonT' async defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body class="bg-blue-300 font-['arial']">
+    
+    <header class="bg-blue-600 h-24 flex items-center justify-center font-medium bg-no-repeat bg-cover bg-center bg-[url('alps.jpg')]">
+        <h1 class="text-4xl font-bold"><i class="fa-solid fa-mountain-sun" style="color: #74C0FC;"></i>バタフライメモリー</h1>
+    </header>
+<section class="md:flex h-scleen">
+    <main id="mainLeft" class="md:w-2/5 mx-3">
+        <div>
+            <p>①下記をクリックして名前</p>
+            <input class="w-full mb-1 bg-red-300 hover:bg-red-100 rounded-md pl-2" type="text" id="name">
+        </div>
+            
+        <select name="" class="w-full mb-1 text-center bg-red-300 rounded-md p-1 hover:bg-red-100" id="sex">
+            <option value="" hidden>②雌雄選択</option>
+            <option value="雄">雄</option>
+            <option value="雌">雌</option>
+            <option value="不明">不明</option>
+            <option value="雌雄胴体">雌雄胴体</option>
+        </select>
+        <div class="positionInfo">
+            <div class="positionInfo1">
+                <button class="w-full mb-1 bg-red-300 rounded-md px-1 hover:bg-red-100 active:bg-yellow-400" onclick="test()">③位置情報取得</button>
+                <div class="position">
+                    <div class="latitude">緯度：<span id="latitude" value="lati"></span></div>
+                    <div class="longitude">経度：<span id="longitude" value="longi"></span></div>
+                </div>
+            </div>
+            <!-- 逆ジオ -->
+
+            <div  class="positionInfo2">
+                <div style='width:100%;height:200px; display:none;' id="mapMain">
+                    <div id="myMap"></div>
+                </div>
+                    <div class="text-red-500" id="myMap2"></div>
+            </div>
+            
+        </div>
+                
+        <div>    
+            <div class="text-xs -mx-3 bg-blue-200" id="view" style="overflow: auto;height: auto;">
+            <p class="ml-3">天候情報</p>
+            </div>
+        </div>            
+
+        <!-- img登録 -->
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div class="mb-1"> 
+                <!--下記は雲イラスト  -->
+                <p>④<i class="fas fa-cloud-upload-alt"></i>下記をclickかD&Dで写真！</p>
+                <input class="w-scleen file:bg-red-300 file:rounded-md file:border-0 hover:file:bg-red-100" type="file" name="upload_file" id="input-files">
+            </div>
+        
+        </form>
+    
+        <textarea class="w-full h-20 pl-2 bg-red-300 rounded-md hover:bg-red-100" id="comment" placeholder="⑤採集状況　簡単な場所など"></textarea>
+        <ul class="flex justify-around">
+            <button class="w-2/5 bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="save">上記を<span class="">Save</span></button>
+            <button class="w-2/5 bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="clear">全てを<span class="">Clear</span></button>
+        </ul>
+        
+            <!-- 任意のデータのみを消すよう -->
+        <div class="border-t-2 border-violet-400 mt-1">
+            <p class="w-scleen" for="">任意のデータを消したいときは下から選んでね</p>
+            <div class="">
+                <select class="text-center w-full  bg-red-300 rounded-md px-1 hover:bg-red-100" id="dataSelect" >
+                    <option value="" hidden>名前を選択</option>
+                    <!-- キーの選択肢はJavaScriptで動的に生成する -->
+                </select>
+            </div>
+            <button class="w-full bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="delete">選んだデータをDelete</button>
+
+        </div>
+
+        <!-- 日付でフィルタ -->
+        <div class="border-t-2 border-violet-400 mt-1">
+            <p class="w-scleen" for="">日付でフィルタ！</p>
+            <div class="filterBox2">
+                <input class="w-full mb-1 bg-red-300 hover:bg-red-100 rounded-md text-center pl-3" type="date" name="" id="dateChoice">
+                <button class="w-full bg-indigo-400 rounded-md hover:bg-indigo-100 active:bg-yellow-400" id="filterDate">フィルタ</button>
+            </div>
+        </div>
+
+        <!-- 名前でサーチ -->
+        <div class="border-t-2 border-violet-400 my-1">
+            <p for="">名前で検索！<span class="iiwake">(完全一致のみ)</span></p>
+            <div class="searchBox2">
+                <input class="w-full mb-1 text-center bg-red-300 hover:bg-red-100 active:bg-red-100 rounded-md" type="" name="" id="searchName">
+                <button class="w-full bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="search">検索！</button>
+            </div>
+            <!-- <div id="searchResults"></div>       -->
+        </div>
+
+        
+    </main>
+    <main id="right" class="md:w-3/5 md:mt-0 mt-1 md:border-t-0 border-t-4 md:border-l-4 border-l-0 border-yellow-400">
+        <h1 class="md:ml-3 md:text-left text-center"><今までの記録></h1>
+        <div class="" id="output" style="overflow: auto; width: auto; height: 300px;">
+            <table>
+                <thead class="sticky top-0 z-20 bg-gray-300">
+                    <tr class="text-xs">
+                        <th class="border-r-2 border-amber-200">Key</th>
+                        <th class="px-4 border-r-2 border-amber-200">Name</th>
+                        <th class="border-r-2 border-amber-200">Sex</th>
+                        <th class="border-r-2 border-amber-200">Area</th>
+                        <th class="border-r-2 border-amber-200">Coordinates</th>
+                        <th class="border-r-2 border-amber-200">Weather Description</th>
+                        <!-- <th class="">Icon</th> -->
+                        <th class="border-r-2 border-amber-200">Temperature</th>
+                        <th class="border-r-2 border-amber-200">Wind Speed</th>
+                        <th class="border-r-2 border-amber-200">Humidity</th>
+                        <th class="border-r-2 border-amber-200 px-10">Image</th>
+                        <th class="border-r-2 border-amber-200">Comment</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="list" class="border-b-4 border-yellow-400">
+                    <!-- データがここに挿入されます -->
+                </tbody>
+
+            </table>
+        </div>
+        <div class="mt-1 pt-1 border-t-4 border-yellow-400" id="addedResults"></div> 
+        
+    </main>
+
+</section>
+    
+
+<script>
+
+// 位置情報取得
+function test() {
+    navigator.geolocation.getCurrentPosition(test2);
+}
+
+function test2(position) {
+    const lati =  position.coords.latitude;
+    const longi =  position.coords.longitude;
+
+
+    $("#latitude").text(lati);
+    $("#longitude").text(longi);
+
+
+    getWeather(lati, longi);
+}
+
+function getWeather(lati, longi) {
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//まずはMAP表示処理
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+const key   = "9791306e542ff7bb5de08402ca917b9a";  //***openwetherの自分のKEYを！！！！！！！！！！！！！！！***
+// const lat   = $("#latitude").val(lati);   //取得した緯度を使用するため必要なし
+// const lon   = $("#longitude").val(longi);  //取得した経度を使用するため必要なし
+
+const icon  = "https://openweathermap.org/img/wn/"
+
+//OpenWeatherAPI（天気情報を取得）現在時刻の情報を取得
+const url = 'https://api.openweathermap.org/data/2.5/weather?lat='+lati+'&lon='+longi+'&appid='+key+'&lang=ja';
+
+$.ajax({
+    url:url,
+    type:'get',
+    cache:false,
+    dataType:'json'
+}).done(function(data){
+    // console.log(data.list[0].dt_txt);//オブジェクト変数を確認
+    console.log(data);//オブジェクト変数を確認、これをconsoleで開いてデータがどこにあるか確認していく。
+
+    
+    let html = `
+            <div class="w-full"> 
+                <div class="text-s text-center">
+                    <div id="area">エリア：${data.name}</div>
+                    <div id="Wdescription">天気：${data.weather[0].description}</div>
+                    <div class="mx-auto w-1/6"><img id="icon" src="${icon+data.weather[0].icon}@2x.png"></div>
+                </div>
+                <div class="text-center">
+                    <div id="K">気温：${data.main.temp}K</div>
+                    <div id="Wspeed">風速：${data.wind.speed}m/s</div>
+                    <div id="humidity">湿気：${data.main.humidity}%</div>
+                </div>
+            </div>
+        `;    
+    
+    $("#view").fadeIn(1000).html(html);
+    // $("#area").html(data.city.name);
+    GetMap(lati, longi);
+});
+
+    console.log(lati);
+    console.log(longi); 
+
+};
+
+    let map,searchManager;
+    function GetMap(lati, longi) {
+        map = new Microsoft.Maps.Map('#myMap', {
+            zoom: 18,
+            center: new Microsoft.Maps.Location(lati, longi),
+            mapTypeId: Microsoft.Maps.MapTypeId.road,
+            showZoomButtons: false, //ズームボタンの有無
+            showMapTypeSelector: false, //地図の種類の変更可否
+            // disablePanning//地図のドラッグ可否
+            // disableZooming//ズームの可否
+            showScalebar: false//スケールバーの表示
+            // showDashboard//ナビゲーションコントロールの有無
+        });
+        $('#mapMain').fadeIn(1000);
+        //Make a request to reverse geocode the center of the map.
+        reverseGeocode();
+    }
+    function reverseGeocode() {
+        //If search manager is not defined, load the search module.
+        if (!searchManager) {
+            //Create an instance of the search manager and call the reverseGeocode function again.
+            Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
+                searchManager = new Microsoft.Maps.Search.SearchManager(map);
+                reverseGeocode();
+            });
+        } else {
+            let searchRequest = {
+                location: map.getCenter(),
+                callback: function (r) {
+                    //Tell the user the name of the result.
+                    // alert(r.name);
+                    $("#myMap2").fadeIn(1000).text(r.name);
+                    var pin = new Microsoft.Maps.Pushpin(map.getCenter(), {
+                        // title: r.name
+                    });
+                    map.entities.push(pin);
+                },
+                errorCallback: function (e) {
+                    //If there is an error, alert the user about it.
+                    alert("Unable to reverse geocode location.");
+                }
+            };
+            //Make the reverse geocode request.
+            searchManager.reverseGeocode(searchRequest);
+        }
+    }
+    //Search Button
+    // document.getElementById("get").onclick = function(){
+    //     Search();
+    // };
+
+
+
+// 日付取得
+let date = new Date();
+console.log(date);
+
+
+
+
+
+</script>
+
+
+
+<!-- ここからfirebase関係 -->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, query, orderByChild, equalTo } 
+    from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyADZXapjuRCMDGTXQGWwPaDi6UJnTj0FlY",
+        authDomain: "gsmemo-5dec7.firebaseapp.com",
+        projectId: "gsmemo-5dec7",
+        storageBucket: "gsmemo-5dec7.appspot.com",
+        messagingSenderId: "823145330668",
+        appId: "1:823145330668:web:b6031f7ddd4ffbbde072c9"
+    };
+    
+    // 画像ファイルのアップロード準備
+    $("#input-files").on("change", function(e) {
+        const file = e.target.files[0];
+        const storageRef = sRef(storage, 'images/' + file.name); // 'images/'は任意のパス
+
+        uploadBytes(storageRef, file).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
+        });
+    });
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
+    const dbRef = ref(db, "memoServer"); // ここはあなたのデータベース参照に合わせてください
+
+    // saveBtnを押した時の機能
+    $("#save").on("click", async function(){
+        let imageUrl = "";
+        if (document.getElementById('input-files').files.length > 0) {
+            const file = document.getElementById('input-files').files[0];
+            const storageRef = sRef(storage, 'images/' + file.name);
+            try{
+                const snapshot = await uploadBytes(storageRef, file);
+                imageUrl = await getDownloadURL(snapshot.ref);
+            } catch (error) {
+                console.error('Error uploading file and getting download URL', error);
+            }
+        }
+
+
+
+         const msg = {
+            name: $("#name").val(),
+            sex: $("#sex").val(),
+            area: $("#area").text(), 
+            latitude: $("#latitude").text(), 
+            longitude: $("#longitude").text(), 
+            Wdescription: $("#Wdescription").text(), 
+            // icon: $("#icon").attr('src'), 
+            temp: $("#K").text(), 
+            Wspeed: $("#Wspeed").text(), 
+            humidity: $("#humidity").text(), 
+            imageUrl: imageUrl,
+            comment: $("#comment").val(),
+            date: new Date().toString()
+        };
+
+        const newEntry = push(dbRef);
+        set(newEntry, msg);
+    });   
+
+    onChildAdded(dbRef,function(data){
+        const msg = data.val();//ここでデータ取得
+        // const key = data.key; 
+        let html = `
+                <tr class="z-0 bg-green-300 border-b-2 border-b-gray-300" id="row-${data.key}">
+                    <td class="text-xs border-r-2 border-amber-200 key">${data.key}</td>
+                    <td class="border-r-2 border-amber-200">${msg.name}</td>
+                    <td class="text-center border-r-2 border-amber-200">${msg.sex}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.area}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.latitude}, ${msg.longitude}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.Wdescription}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.temp}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.Wspeed}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.humidity}</td>
+                    <td class="text-center border-r-2 border-amber-200 imageUrl"><img src="${msg.imageUrl}" alt="Uploaded image"></td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${msg.comment}</td>
+                    <td class="text-xs text-center Date">${msg.date}</td>
+                </tr>
+            `;
+            $("#list").append(html);
+            $("#output").scrollTop($("#output")[0].scrollHeight);
+    });
+    
+
+
+
+$("#clear").on("click", function() {
+    // ユーザーに確認を取る
+    if (confirm("バタフライメモリーを消しますか？元に戻りませんよ？")) {
+        const dbRef = ref(db, "memoServer"); // memoServerを参照
+
+        // memoServer データを全削除
+        set(dbRef, null).then(() => {
+            // HTML上のリストもクリア
+            $("#list").empty();
+            alert("データが全て削除されました。");
+        // }).catch(error => {
+        //     console.error("Error deleting data: ", error);
+        });
+    }else{
+        // cancelなので記載しない
+    }
+});
+
+// 任意のデータのみ消す
+onChildAdded(dbRef, (snapshot) => {
+        const key = snapshot.key;
+        const data = snapshot.val();
+        const option = `<option value="${key}">${data.name} (${key})</option>`;
+        $("#dataSelect").append(option);
+});
+
+$("#delete").on("click", function() {
+        const selectedKey = $("#dataSelect").val();
+        if (confirm("削除しますか？")) {
+            const itemRef = ref(db, `memoServer/${selectedKey}`);
+            remove(itemRef).then(() => {
+                $("#dataSelect option[value='" + selectedKey + "']").remove();
+                $(`#row-${selectedKey}`).remove(); // HTMLから行を削除
+            }).catch(error => {
+                console.error("Error deleting data: ", error);
+            });
+        }else{
+
+        }
+});
+
+// 日付でソート
+$("#filterDate").on("click", function() {
+    const chosenDate = $("#dateChoice").val(); // 選択した日付を取得
+    const formattedDate = new Date(chosenDate).toDateString(); // 日付を整形
+    console.log(chosenDate);
+    // 新しいテーブルのセットアップ
+    $("#addedResults").html(`
+    <h1 class="md:ml-3 md:text-left text-center" id="filterDate2"></h1>
+    <div id="output" style="overflow: auto; height: 300px;">
+        <table>
+            <thead class="sticky top-0 z-20 bg-gray-300">
+                <tr class="text-xs">
+                    <th class="border-r-2 border-amber-200">Key</th>
+                    <th class="px-4 border-r-2 border-amber-200">Name</th>
+                    <th class="border-r-2 border-amber-200">Sex</th>
+                    <th class="border-r-2 border-amber-200">Area</th>
+                    <th class="border-r-2 border-amber-200">Coordinates</th>
+                    <th class="border-r-2 border-amber-200">Weather Description</th>
+                    <!-- <th class="">Icon</th> -->
+                    <th class="border-r-2 border-amber-200">Temperature</th>
+                    <th class="border-r-2 border-amber-200">Wind Speed</th>
+                    <th class="border-r-2 border-amber-200">Humidity</th>
+                    <th class="border-r-2 border-amber-200 px-10">Image</th>
+                    <th class="border-r-2 border-amber-200">Comment</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="filtered-list"></tbody>
+        </table>
+    </div>
+    `);
+
+    // 日付に基づいてデータをフィルタリング
+    onChildAdded(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        const dataDate = new Date(data.date).toDateString(); // データの日付を整形
+        $("#filterDate2").text(' <' + chosenDate +'でソート！>');
+        if (dataDate === formattedDate) { // フィルタ条件に一致する場合のみ表示
+            const html = `
+                <tr class="z-0 bg-green-300 border-b-2 border-b-gray-300">
+                    <td class="text-xs border-r-2 border-amber-200">${snapshot.key}</td>
+                    <td class="border-r-2 border-amber-200">${data.name}</td>
+                    <td class="border-r-2 border-amber-200">${data.sex}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.area}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.latitude}, ${data.longitude}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.Wdescription}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.temp}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.Wspeed}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.humidity}</td>
+                    <td class="border-r-2 border-amber-200"><img src="${data.imageUrl}" alt="Uploaded image"></td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.comment}</td>
+                    <td class="text-xs border-r-2 border-amber-200">${data.date}</td>
+                </tr>
+            `;
+            $("#filtered-list").append(html);
+        }
+    });
+});
+
+// 名前検索
+$("#search").on("click", function() {
+        // searchNameに入力したワードをgetSearchNameに与える
+        const getSearchName = $("#searchName").val().trim();
+        const dbRef = ref(db, "memoServer");
+        // dbRef内のカラムnameにgetSearchNameに与えれたワードがある場合、searchQueryに与える
+        // equalToでは完全一致のみ
+        const searchQuery = query(dbRef, orderByChild("name"), equalTo(getSearchName));
+        
+    $("#addedResults").html(`
+    <h1 class="md:ml-3 md:text-left text-center" id="searchName2"></h1>
+    <div id="output" style="overflow: auto; height: 300px;">
+        <table>
+            <thead class="sticky top-0 z-20 bg-gray-300">
+                <tr class="text-xs">
+                    <th class="border-r-2 border-amber-200">Key</th>
+                    <th class="px-4 border-r-2 border-amber-200">Name</th>
+                    <th class="border-r-2 border-amber-200">Sex</th>
+                    <th class="border-r-2 border-amber-200">Area</th>
+                    <th class="border-r-2 border-amber-200">Coordinates</th>
+                    <th class="border-r-2 border-amber-200">Weather Description</th>
+                    <!-- <th class="veryShort">Icon</th> -->
+                    <th class="border-r-2 border-amber-200">Temperature</th>
+                    <th class="border-r-2 border-amber-200">Wind Speed</th>
+                    <th class="border-r-2 border-amber-200">Humidity</th>
+                    <th class="border-r-2 border-amber-200 px-10">Image</th>
+                    <th class="border-r-2 border-amber-200">Comment</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="search-list"></tbody>
+        </table>
+    </div>
+    `);
+
+    // onChildAdded(dbRef, (searchQuery) => {
+    //     const data = searchQuery.val();
+    //     // const dataDate = new Date(data.date).toDateString(); // データの日付を整形
+
+    //     // if () { 
+    //         const html = `
+    //             <tr>
+    //                 <td>${searchQuery.key}</td>
+    //                 <td>${data.name}</td>
+    //                 <td>${data.sex}</td>
+    //                 <td>${data.area}</td>
+    //                 <td>${data.latitude}, ${data.longitude}</td>
+    //                 <td>${data.Wdescription}</td>
+    //                 <td>${data.temp}</td>
+    //                 <td>${data.Wspeed}</td>
+    //                 <td>${data.humidity}</td>
+    //                 <td class="imageUrl"><img src="${data.imageUrl}" alt="Uploaded image"></td>
+    //                 <td>${data.comment}</td>
+    //                 <td class="Date">${data.date}</td>
+    //             </tr>
+    //         `;
+    //         $("#search-list").append(html);
+    //     // }
+    // });
+
+    onChildAdded(searchQuery, function(snapshot) {
+        const data = snapshot.val();
+        // const dataDate = new Date(data.date).toDateString(); // データの日付を整形
+        $("#searchName2").text('<' + getSearchName +'の検索結果>');
+        // if () { 
+            const html = `
+                <tr class="z-0 bg-green-300 border-b-2 border-b-gray-300">
+                    <td class="text-xs border-r-2 border-amber-200 key">${snapshot.key}</td>
+                    <td class="border-r-2 border-amber-200">${data.name}</td>
+                    <td class="text-center border-r-2 border-amber-200">${data.sex}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.area}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.latitude}, ${data.longitude}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.Wdescription}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.temp}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.Wspeed}</td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.humidity}</td>
+                    <td class="text-center border-r-2 border-amber-200 imageUrl"><img src="${data.imageUrl}" alt="Uploaded image"></td>
+                    <td class="text-xs text-center border-r-2 border-amber-200">${data.comment}</td>
+                    <td class="text-xs text-center Date">${data.date}</td>
+                </tr>
+            `;
+            $("#search-list").append(html);
+        // }
+    });
+
+
+});
+</script>    
+<footer class="h-24 flex items-center justify-center font-medium bg-no-repeat bg-cover bg-center bg-[url('footerButterfly.webp')]"></footer>
+</body>
+</html>
