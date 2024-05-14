@@ -35,7 +35,7 @@
         </select>
         <div class="positionInfo">
             <div class="positionInfo1">
-                <button class="w-full mb-1 bg-red-300 rounded-md px-1 hover:bg-red-100 active:bg-yellow-400" onclick="test()">③位置情報取得</button>
+                <button class="w-full mb-1 bg-red-300 rounded-md px-1 hover:bg-red-100 active:bg-yellow-400 text-center" onclick="test()">③位置情報取得</button>
                 <div class="position">
                     <div class="latitude">緯度：<span id="latitude" value="lati"></span></div>
                     <div class="longitude">経度：<span id="longitude" value="longi"></span></div>
@@ -70,8 +70,8 @@
     
         <textarea class="w-full h-20 pl-2 bg-red-300 rounded-md hover:bg-red-100" id="comment" placeholder="⑤採集状況　簡単な場所など"></textarea>
         <ul class="flex justify-around">
-            <button class="w-2/5 bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="save">上記を<span class="">Save</span></button>
-            <button class="w-2/5 bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="clear">全てを<span class="">Clear</span></button>
+            <button class="w-2/5 bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400 text-center" id="save">上記を<span class="">Save</span></button>
+            <button class="w-2/5 bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400 text-center" id="clear">全てを<span class="">Clear</span></button>
         </ul>
         
             <!-- 任意のデータのみを消すよう -->
@@ -83,7 +83,7 @@
                     <!-- キーの選択肢はJavaScriptで動的に生成する -->
                 </select>
             </div>
-            <button class="w-full bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="delete">選んだデータをDelete</button>
+            <button class="w-full bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400 text-center" id="delete">選んだデータをDelete</button>
 
         </div>
 
@@ -92,7 +92,7 @@
             <p class="w-scleen" for="">日付でフィルタ！</p>
             <div class="filterBox2">
                 <input class="w-full mb-1 bg-red-300 hover:bg-red-100 rounded-md text-center pl-3" type="date" name="" id="dateChoice">
-                <button class="w-full bg-indigo-400 rounded-md hover:bg-indigo-100 active:bg-yellow-400" id="filterDate">フィルタ</button>
+                <button class="w-full bg-indigo-400 rounded-md hover:bg-indigo-100 active:bg-yellow-400 text-center" id="filterDate">フィルタ</button>
             </div>
         </div>
 
@@ -101,7 +101,7 @@
             <p for="">名前で検索！<span class="iiwake">(完全一致のみ)</span></p>
             <div class="searchBox2">
                 <input class="w-full mb-1 text-center bg-red-300 hover:bg-red-100 active:bg-red-100 rounded-md" type="" name="" id="searchName">
-                <button class="w-full bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400" id="search">検索！</button>
+                <button class="w-full bg-indigo-400 rounded-md px-1 hover:bg-indigo-100 active:bg-yellow-400 text-center" id="search">検索！</button>
             </div>
             <!-- <div id="searchResults"></div>       -->
         </div>
